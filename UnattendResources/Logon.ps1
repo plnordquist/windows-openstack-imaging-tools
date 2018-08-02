@@ -122,6 +122,8 @@ function Install-WindowsUpdates {
 
     #Note (cgalan): Some updates are black-listed as they are either failing to install or superseeded by the newer updates.
     $KBIdsBlacklist = @{
+        # Language optional updates for Windows 7
+        "6.1" = @("KB2483139")
         "6.3" = @("KB2887595")
     }
     $excludedUpdates = $KBIdsBlacklist[$OSKernelVersion]
