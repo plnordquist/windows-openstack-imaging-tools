@@ -567,6 +567,30 @@ function Enable-FeaturesInImage {
     }
 }
 
+function Add-PackagesToImage {
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$winImagePath,
+        [Parameter(Mandatory=$true)]
+        [string]$packages
+    )
+    if ($packages) {
+        $cmd = @(
+        "Dism.exe",
+        ("/image:{0}" -f ${winImagePath}),
+        "/Add-Package"
+        )
+        foreach ($package in $packages.Split(",")) {
+            $cmd += ("/PackagePath:{0}" -f $package)
+        }
+         Write-Output ('Adding packages from "{0}" to image "{1}"' -f $packages.Split(","), $winImagePath)
+        Execute-Retry {
+            & $cmd[0] $cmd[1..$cmd.Length] | Out-Host
+            if ($LASTEXITCODE) { throw "Dism failed to add packages: $cmd" }
+        }
+    }
+}
+
 function Check-EnablePowerShellInImage {
     Param(
         [Parameter(Mandatory=$true)]
@@ -1336,6 +1360,9 @@ function New-WindowsCloudImage {
         }
         if ($windowsImageConfig.extra_features) {
             Enable-FeaturesInImage $winImagePath $windowsImageConfig.extra_features
+        }
+        if ($windowsImageConfig.extra_packages) {
+            Add-PackagesToImage $winImagePath $windowsImageConfig.extra_packages
         }
     } finally {
         if (Test-Path $vhdPath) {

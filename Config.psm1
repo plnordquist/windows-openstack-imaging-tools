@@ -44,6 +44,8 @@ function Get-AvailableConfigOptions {
         @{"Name" = "extra_features";
           "Description" = "A comma separated array of extra features that will be enabled on the resulting image.
                            These features need to be present in the ISO file."},
+        @{"Name" = "extra_packages";
+          "Description" = "A comma separated array of extra packages that will be installed in the resulting image."},
         @{"Name" = "force"; "DefaultValue" = $false; "AsBoolean" = $true;
           "Description" = "It will force the image generation when RunSysprep is False or the selected SwitchName
                            is not an external one. Use this parameter with caution because it can easily generate
